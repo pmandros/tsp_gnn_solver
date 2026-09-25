@@ -13,7 +13,7 @@ import torch
 
 from .graph import EDGE_DIM, NODE_DIM
 from .model import TSPGNN
-from .solve import gnn_heatmap, solve_gnn
+from .solve import gnn_heatmap, solve_gnn, solve_greedy_distance
 
 DEFAULT_CHECKPOINT = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "checkpoints", "tspgnn.pt"
@@ -36,6 +36,19 @@ def solve(distance_matrix, checkpoint=DEFAULT_CHECKPOINT, two_opt=True, k=20):
     if isinstance(two_opt, str):
         two_opt = two_opt.lower() == "true"
     return solve_gnn(load_model(checkpoint), d, int(k), use_two_opt=two_opt)
+
+
+def solve_without_two_opt(distance_matrix, checkpoint=DEFAULT_CHECKPOINT, k=20):
+    """GNN greedy decoding only, for ablations (``tspbench`` keeps ``two_opt`` for itself)."""
+    return solve(distance_matrix, checkpoint=checkpoint, two_opt=False, k=k)
+
+
+def solve_distance_greedy(distance_matrix, two_opt=True, k=20):
+    """Ablation: the same decoder and 2-opt, with edges ranked by distance instead of the GNN."""
+    d = np.asarray(distance_matrix, dtype=np.float64)
+    if d.shape[0] <= 3:
+        return np.arange(d.shape[0])
+    return solve_greedy_distance(d, int(k), use_two_opt=two_opt)
 
 
 def predict(distance_matrix, checkpoint=DEFAULT_CHECKPOINT, k=20):

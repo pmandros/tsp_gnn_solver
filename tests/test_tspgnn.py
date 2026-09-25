@@ -67,3 +67,11 @@ def test_solvers_return_valid_tours():
         for tour in (solve_gnn(model, d), solve_gnn(model, d, use_two_opt=False),
                      solve_greedy_distance(d), solve_nearest_neighbor(d)):
             assert is_valid_tour(tour, n)
+
+
+@pytest.mark.parametrize("name", ["solve", "solve_without_two_opt", "solve_distance_greedy"])
+def test_api_entry_points_return_valid_tours(name):
+    from tspgnn import api
+
+    d = instances.generate("euclidean", 40, np.random.default_rng(3))
+    assert is_valid_tour(getattr(api, name)(d), 40)
