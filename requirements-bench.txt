@@ -1,0 +1,8 @@
+# Exact versions the harness was tested with (Python 3.11).
+numpy==2.4.6
+scipy==1.17.1
+ortools==9.15.6755
+elkai==2.0.1
+pytest==9.1.1
+# Concorde is optional and has no wheel; build it with:
+#   pip install 'pyconcorde @ git+https://github.com/jvkersch/pyconcorde'
