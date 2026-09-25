@@ -33,4 +33,4 @@ python scripts/train.py --train 'data/train_*.pt' --val data/val.pt --out runs/m
 python scripts/evaluate.py --ckpt runs/main/best.pt --out results/main.json
 ```
 
-`tspgnn.api.solve(distance_matrix) -> tour` and `tspgnn.api.predict(distance_matrix) -> heatmap` are plain-function entry points that other code, such as a benchmark harness, can call. Results up to n=1000 are in [results/RESULTS.md](results/RESULTS.md).
+`tspgnn.api.solve(distance_matrix) -> tour` and `tspgnn.api.predict(distance_matrix) -> heatmap` are plain-function entry points that other code, such as a benchmark harness, can call. Results up to n=1000 are in [results/RESULTS.md](results/RESULTS.md). The full benchmark against classical and published learned solvers (TSP20–10000, TSPLIB, held-out metrics) is in [results/BENCHMARK.md](results/BENCHMARK.md).
