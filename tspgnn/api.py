@@ -1,0 +1,50 @@
+"""Plain-function entry points, e.g. for ``tspbench``.
+
+    solve(distance_matrix) -> tour
+    predict(distance_matrix) -> (n, n) edge scores
+
+Both take the checkpoint path as a keyword argument and cache the loaded model.
+"""
+import os
+from functools import lru_cache
+
+import numpy as np
+import torch
+
+from .graph import EDGE_DIM, NODE_DIM
+from .model import TSPGNN
+from .solve import gnn_heatmap, solve_gnn
+
+DEFAULT_CHECKPOINT = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "checkpoints", "tspgnn.pt"
+)
+
+
+@lru_cache(maxsize=4)
+def load_model(checkpoint=DEFAULT_CHECKPOINT):
+    ck = torch.load(checkpoint, map_location="cpu", weights_only=False)
+    cfg = ck["config"]
+    model = TSPGNN(NODE_DIM, EDGE_DIM, cfg["hidden"], cfg["layers"])
+    model.load_state_dict(ck["state_dict"])
+    return model.eval()
+
+
+def solve(distance_matrix, checkpoint=DEFAULT_CHECKPOINT, two_opt=True, k=20):
+    d = np.asarray(distance_matrix, dtype=np.float64)
+    if d.shape[0] <= 3:
+        return np.arange(d.shape[0])
+    if isinstance(two_opt, str):
+        two_opt = two_opt.lower() == "true"
+    return solve_gnn(load_model(checkpoint), d, int(k), use_two_opt=two_opt)
+
+
+def predict(distance_matrix, checkpoint=DEFAULT_CHECKPOINT, k=20):
+    """Symmetric edge probabilities; pairs outside the kNN graph get 0."""
+    d = np.asarray(distance_matrix, dtype=np.float64)
+    n = d.shape[0]
+    (src, dst), score = gnn_heatmap(load_model(checkpoint), d, int(k))
+    heat = np.zeros((n, n), dtype=np.float32)
+    p = 1.0 / (1.0 + np.exp(-score))
+    heat[src, dst] = p
+    heat[dst, src] = p
+    return heat

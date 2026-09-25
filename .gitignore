@@ -3,5 +3,8 @@ __pycache__/
 .pytest_cache/
 data/*
 !data/refs/
-results/
+runs/
+results/*
+!results/RESULTS.md
+!results/main.json
 tools/

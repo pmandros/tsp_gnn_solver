@@ -18,7 +18,7 @@ test = ["pytest>=7"]
 tspbench = "tspbench.cli:main"
 
 [tool.setuptools]
-packages = ["tspbench", "tspbench.solvers"]
+packages = ["tspbench", "tspbench.solvers", "tspgnn"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
