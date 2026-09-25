@@ -14,6 +14,12 @@ jobs:
           python-version: "3.11"
       - run: pip install -r requirements-bench.txt
       - run: pip install -e . --no-deps
-      - run: pytest -q
+      - name: fetch the prebuilt Concorde binary
+        run: python scripts/download_benchmarks.py --no-tsplib --no-fu --concorde tools/concorde
+      - run: pytest -q -rs
+        env:
+          CONCORDE_BIN: ${{ github.workspace }}/tools/concorde
       - name: smoke run
-        run: python -m tspbench run --suite tsp20 --suite atsp20:num=5 --limit 5 --solver farthest_insertion --solver lkh --solver ortools:time_limit=0.1 --seeds 0 1 --out results/ci
+        run: python -m tspbench run --suite tsp20 --suite atsp20:num=5 --limit 5 --solver farthest_insertion --solver concorde --solver lkh --solver ortools:time_limit=0.1 --seeds 0 1 --out results/ci
+        env:
+          CONCORDE_BIN: ${{ github.workspace }}/tools/concorde

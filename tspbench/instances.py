@@ -46,9 +46,9 @@ def pairwise(metric: str, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         q2 = np.cos(lat_a - lat_b)
         q3 = np.cos(lat_a + lat_b)
         arg = np.clip(0.5 * ((1.0 + q1) * q2 - (1.0 - q1) * q3), -1.0, 1.0)
-        d = np.trunc(6378.388 * np.arccos(arg) + 1.0)
-        # TSPLIB's formula gives 1 for identical points; the diagonal is 0.
-        return np.where(np.all(a == b, axis=-1), 0.0, d)
+        # TSPLIB (and Concorde) give 1 even for two distinct nodes at the same
+        # place, as in ali535; only the diagonal is zeroed, in full_matrix.
+        return np.trunc(6378.388 * np.arccos(arg) + 1.0)
     diff = a - b
     if metric in ("euclidean", "EUC_2D", "CEIL_2D", "ATT"):
         sq = np.einsum("...i,...i->...", diff, diff)
@@ -145,7 +145,9 @@ class Instance:
         if self.n > max_n:
             raise MemoryError(f"refusing to build a dense {self.n}x{self.n} matrix")
         c = self.coords
-        return pairwise(self.metric, c[:, None, :], c[None, :, :])
+        m = pairwise(self.metric, c[:, None, :], c[None, :, :])
+        np.fill_diagonal(m, 0.0)
+        return m
 
     def tour_length(self, tour) -> float:
         tour = check_tour(tour, self.n)

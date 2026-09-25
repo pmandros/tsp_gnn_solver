@@ -19,16 +19,18 @@ pip install -e . --no-deps
 python -m tspbench list                 # shows which solver backends are available
 ```
 
-Concorde is optional:
-`pip install 'pyconcorde @ git+https://github.com/jvkersch/pyconcorde'`, or
-point `CONCORDE_BIN` at a `concorde` executable. Setting `LKH_BIN` to a
-separately built LKH-3 selects it with `lkh:backend=binary`.
-
-Download TSPLIB (symmetric and asymmetric) into `data/`:
+Download TSPLIB (symmetric and asymmetric, with optimal tours), the Fu et al.
+TSP500/1000/10000 files, and optionally a prebuilt Linux Concorde binary:
 
 ```bash
-python scripts/download_benchmarks.py
+python scripts/download_benchmarks.py --concorde tools/concorde
+export CONCORDE_BIN=$PWD/tools/concorde
 ```
+
+The binary is the one pyconcorde ships; the build from source needs QSopt from
+the Waterloo site. `pip install 'pyconcorde @ git+https://github.com/jvkersch/pyconcorde'`
+also works where that site is reachable. Setting `LKH_BIN` to a separately
+built LKH-3 selects it with `lkh:backend=binary`.
 
 ## Suites
 
@@ -49,14 +51,19 @@ Generated families take `num=` and `seed=` options, e.g.
 `clustered200:num=256,seed=7`. They accept any n, which is what the size
 generalization sweeps need.
 
-The Fu et al. files are not fetched automatically because they have no stable
-URL. They are the `tsp{500,1000,10000}_test_concorde.txt` files published with
-Att-GCRN+MCTS and reused by DIMES and DIFUSCO. Copy them into `data/fu/`.
+The Fu et al. files are fetched from the authors' repository (Spider-scnu/TSP)
+at a pinned commit. **Do not use their tours as references.** The TSP10000 file
+carries the identity permutation as a placeholder, so the loader ignores it.
+The TSP500 and TSP1000 tours average 16.584 and 23.227, while the optima
+reported in the literature are 16.55 and 23.12, so the shipped tours are about
+0.2–0.5% longer than optimal. Before reporting gaps, run `tspbench reference` with
+Concorde or LKH-3 on these suites. A cached reference takes precedence over the
+file tour.
 
-Kool et al. regenerate their sets from seeds, and the harness does the same
-(`tests/test_bench.py` checks the RNG stream). Before quoting TSP20/50/100
-numbers in a paper, check a few instances against the released
-`tsp*_test_seed1234.pkl` files.
+Kool et al. regenerate their sets from seeds. Their `generate_data.py` calls
+`np.random.seed(1234)` and then draws `np.random.uniform(size=(10000, n, 2))`
+for each size, and `tspbench` does the same. `tests/test_bench.py` checks that
+the two RNG streams match.
 
 ## Solvers
 
@@ -64,7 +71,7 @@ A solver is named by a spec string: `name` or `name:key=value,...`.
 
 | spec | type | notes |
 |---|---|---|
-| `concorde` | exact | Requires pyconcorde or `CONCORDE_BIN`. Solves ATSP through the 2n-node transformation when the weights fit in 32 bits. |
+| `concorde` | exact | Requires `CONCORDE_BIN` or pyconcorde. Exact on symmetric TSPLIB. For ATSP it goes through the 2n-node transformation: exact on TSPLIB ATSP, near-exact on float matrices, which are rescaled so Concorde doesn't crash. |
 | `lkh` (`runs`, `max_trials`, `time_limit`, `backend`) | stochastic, seeded | LKH-3. Handles TSP and ATSP. |
 | `ortools` (`time_limit`, `metaheuristic`) | deterministic | Guided local search by default. The stopping rule is wall-clock time. |
 | `nearest_neighbor` | stochastic | Starts from a random node. |

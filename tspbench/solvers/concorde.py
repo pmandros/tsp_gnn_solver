@@ -6,8 +6,14 @@ fixes the notebook's habit of comparing a float tour against Concorde's
 rounded ``optimal_value``.
 
 Asymmetric instances go through the standard 2n-node symmetric transformation
-(Jonker & Volgenant 1983); that needs ``(n+1)^2 * max_d < 2^31``, so large or
-wide-range ATSP instances are rejected and LKH-3 should be used for them.
+(Jonker & Volgenant 1983). Its penalty weights grow like ``n * tour length``;
+Concorde segfaults well before weights reach 2^31, so the matrix is scaled to keep
+every weight below ``_MAX_WEIGHT``. Integer instances that would need scaling
+are rejected (use LKH-3); float instances lose a little precision, so Concorde
+on generated ATSP is near-exact rather than exact.
+
+A crashed Concorde prints ``FATAL ERROR`` and then sleeps for an hour "to permit
+debugger access"; the binary backend watches for that and kills it.
 """
 
 from __future__ import annotations
@@ -22,7 +28,7 @@ import numpy as np
 from .base import Solver, SolverUnavailable, Unsupported, register
 from ._export import IntProblem, to_int_problem
 
-_INT_MAX = 2**31 - 1
+_MAX_WEIGHT = 2**25  # Concorde segfaulted on a 50-node ATSP between 2^26 and 2^29
 
 
 def _concorde_binary():
@@ -37,18 +43,40 @@ def _have_pyconcorde() -> bool:
     return True
 
 
+def _nn_upper_bound(d: np.ndarray) -> int:
+    n = len(d)
+    seen = np.zeros(n, dtype=bool)
+    cur, total = 0, 0
+    for _ in range(n - 1):
+        seen[cur] = True
+        row = np.where(seen, np.iinfo(np.int64).max, d[cur])
+        nxt = int(np.argmin(row))
+        total += int(d[cur, nxt])
+        cur = nxt
+    return total + int(d[cur, 0])
+
+
+def atsp_penalties(d: np.ndarray):
+    """(M, BIG) for :func:`atsp_to_stsp`: M exceeds any tour's length, BIG any valid 2n-tour."""
+    n = len(d)
+    ub = _nn_upper_bound(d)
+    m = ub + 1
+    return m, n * m + ub + 1
+
+
 def atsp_to_stsp(d: np.ndarray) -> np.ndarray:
     """Symmetric 2n x 2n integer matrix whose optimal tours map to optimal ATSP tours.
 
     Node ``i`` is paired with a ghost ``n + i`` by a zero-cost edge; arc ``i -> j``
     becomes edge ``(n + i, j)`` with cost ``d[i, j] + M``; all other edges cost
-    ``BIG``. Any tour avoiding ``BIG`` edges alternates real and ghost nodes and
-    must use all n zero edges, so it reads as ``i -> j -> ...`` in the original.
+    ``BIG``. With ``M`` above an upper bound on the ATSP optimum, a tour that
+    skips a zero edge costs at least ``(n + 1) M``, more than any real tour
+    (``n M + length``); ``BIG`` is above that too. So optimal tours alternate
+    real and ghost nodes, use every zero edge, and read as ``i -> j -> ...``.
     """
     d = np.asarray(d, dtype=np.int64)
     n = len(d)
-    m = n * int(d.max()) + 1
-    big = (n + 1) * m
+    m, big = atsp_penalties(d)
     s = np.full((2 * n, 2 * n), big, dtype=np.int64)
     s[n:, :n] = d + m  # ghost of i -> j
     s[:n, n:] = (d + m).T
@@ -73,7 +101,10 @@ def stsp_tour_to_atsp(tour: np.ndarray, n: int) -> np.ndarray:
 
 @register("concorde")
 class Concorde(Solver):
-    """``concorde:time_bound=-1,max_int=1e6``. Exact on the scaled integer problem."""
+    """``concorde:backend=binary|pyconcorde,time_bound=-1,max_int=1e6``. Exact on the scaled integer problem.
+
+    The binary backend (``CONCORDE_BIN``) is preferred when set; it is the one tested in CI.
+    """
 
     exact = True
 
@@ -88,12 +119,12 @@ class Concorde(Solver):
         n = inst.n
         asym = prob.asymmetric
         if asym:
-            limit = _INT_MAX // ((n + 1) ** 2 + 1)
             m = prob.matrix
-            if int(m.max()) > limit:
+            big = atsp_penalties(m)[1]
+            if big > _MAX_WEIGHT:
                 if inst.integral:
                     raise Unsupported("ATSP weights too large for Concorde's transformation; use lkh")
-                m = np.rint(inst.matrix * (limit / float(inst.matrix.max()))).astype(np.int64)
+                m = np.rint(m * (0.9 * _MAX_WEIGHT / big)).astype(np.int64)
             prob = IntProblem(2 * n, False, matrix=atsp_to_stsp(m))
         tour = self._run(prob, inst.name, seed)
         return stsp_tour_to_atsp(tour, n) if asym else tour
@@ -103,7 +134,8 @@ class Concorde(Solver):
             path = os.path.join(tmp, "p.tsp")
             with open(path, "w") as f:
                 f.write(prob.tsplib_text(name))
-            if _have_pyconcorde() and self.params.get("backend", "pyconcorde") == "pyconcorde":
+            backend = self.params.get("backend", "binary" if _concorde_binary() else "pyconcorde")
+            if backend == "pyconcorde" and _have_pyconcorde():
                 from concorde.tsp import TSPSolver
 
                 cwd = os.getcwd()
@@ -121,7 +153,19 @@ class Concorde(Solver):
             if not exe:
                 raise SolverUnavailable("concorde binary not found (set CONCORDE_BIN)")
             out = os.path.join(tmp, "p.sol")
-            subprocess.run([exe, "-x", "-s", str(int(seed)), "-o", out, path], cwd=tmp, check=True, capture_output=True)
+            # No -x: with it Concorde exits 255 after solving (it fails to delete its
+            # temp files); the temporary directory is cleaned up anyway.
+            proc = subprocess.Popen([exe, "-s", str(int(seed)), "-o", out, path], cwd=tmp, text=True,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL)
+            tail = []
+            for line in proc.stdout:
+                tail = (tail + [line])[-20:]
+                if "FATAL ERROR" in line:
+                    proc.kill()
+                    break
+            proc.wait()
+            if proc.returncode != 0 or not os.path.exists(out):
+                raise RuntimeError(f"concorde exited {proc.returncode}: {''.join(tail)[-600:]}")
             with open(out) as f:
                 vals = f.read().split()
             return np.array(vals[1 : 1 + int(vals[0])], dtype=np.int64)

@@ -36,7 +36,8 @@ def test_tsplib_metrics_match_definitions():
     assert pairwise("MAX_2D", a, b) == 4
     # ATT: sqrt(25/10)=1.58 -> nint 2, 2 >= 1.58 so 2
     assert pairwise("ATT", np.array([0.0, 0.0]), np.array([3.0, 4.0])) == 2
-    assert pairwise("GEO", a, a) == 0
+    assert pairwise("GEO", a, a) == 1  # TSPLIB's formula; only the matrix diagonal is 0
+    assert Instance("g", coords=[a, a, b], metric="GEO").full_matrix()[0, 0] == 0
 
 
 def test_tour_length_and_validation():
@@ -122,6 +123,7 @@ def test_text_format_roundtrip(tmp_path):
     back = read_text_tsp(str(p))
     assert len(back) == 2
     assert np.allclose(back[0].coords, insts[0].coords)
+    assert "reference_length" not in back[0].meta  # identity tours are treated as placeholders
     assert back[1].meta["reference_length"] == pytest.approx(insts[1].tour_length(tours[1]))
 
 
@@ -257,3 +259,40 @@ def test_suite_specs():
         load_suite("tsp500", data_dir="/nonexistent")
     with pytest.raises(KeyError):
         load_suite("nope")
+
+
+# --------------------------------------------------------------------------- real TSPLIB files
+
+DATA = os.path.join(os.path.dirname(__file__), "data")
+OPT_TOURS = ["ulysses16", "att48", "gr24", "bayg29", "fri26", "berlin52"]  # GEO, ATT, 3 explicit formats, EUC_2D
+
+
+@pytest.mark.parametrize("name", OPT_TOURS)
+def test_tsplib_optimal_tours_score_the_published_optimum(name):
+    from tspbench.tsplib_optima import optimum
+
+    inst = read_tsplib(os.path.join(DATA, f"{name}.tsp"), optimum=optimum(name))
+    tour = read_tsplib_tour(os.path.join(DATA, f"{name}.opt.tour"))
+    assert inst.tour_length(tour) == inst.optimum
+
+
+def test_tsplib_atsp_br17():
+    inst = read_tsplib(os.path.join(DATA, "br17.atsp"), optimum=39)
+    assert not inst.symmetric and inst.n == 17
+    if _have("lkh"):
+        assert inst.tour_length(make_solver("lkh:runs=3").solve(inst)) == 39
+
+
+@pytest.mark.skipif(not _have("concorde"), reason="Concorde not installed")
+@pytest.mark.parametrize("name", OPT_TOURS)
+def test_concorde_reaches_tsplib_optimum(name):
+    from tspbench.tsplib_optima import optimum
+
+    inst = read_tsplib(os.path.join(DATA, f"{name}.tsp"), optimum=optimum(name))
+    assert inst.tour_length(make_solver("concorde").solve(inst)) == inst.optimum
+
+
+@pytest.mark.skipif(not _have("concorde"), reason="Concorde not installed")
+def test_concorde_atsp_br17():
+    inst = read_tsplib(os.path.join(DATA, "br17.atsp"), optimum=39)
+    assert inst.tour_length(make_solver("concorde").solve(inst)) == 39

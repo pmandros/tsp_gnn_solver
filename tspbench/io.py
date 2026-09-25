@@ -166,8 +166,11 @@ def read_text_tsp(path: str, limit: Optional[int] = None, prefix: Optional[str] 
                 tour = np.array(right.split(), dtype=np.int64) - 1
                 if len(tour) == inst.n + 1:
                     tour = tour[:-1]
-                inst.meta["reference_tour"] = tour
-                inst.meta["reference_length"] = inst.tour_length(tour)
+                # Some published files carry placeholder tours (TSP10000 ships the
+                # identity permutation); keep those out of the references.
+                if not np.array_equal(tour, np.arange(inst.n)):
+                    inst.meta["reference_tour"] = tour
+                    inst.meta["reference_length"] = inst.tour_length(tour)
             out.append(inst)
     return out
 

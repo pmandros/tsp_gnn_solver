@@ -4,6 +4,11 @@ Values are the optima listed on the TSPLIB95 site (``STSP.html`` / ``ATSP.html``
 for the symmetric and asymmetric collections, in each instance's own integer
 metric. Only instances with proven optima are listed; instances not in this
 table are loaded with ``optimum=None`` and scored against a reference solver.
+
+Checked against the TSPLIB solutions list and, for 77 instances with n <= 1000
+plus all 19 ATSP instances, against Concorde. The one disagreement is d657:
+Concorde proves 48913 under the EUC_2D rounding it and ``tspbench`` both
+implement, one unit above the published 48912; the published value is kept.
 """
 
 STSP_OPTIMA = {
@@ -12,7 +17,7 @@ STSP_OPTIMA = {
     "brazil58": 25395, "brd14051": 469385, "brg180": 1950, "burma14": 3323,
     "ch130": 6110, "ch150": 6528, "d198": 15780, "d493": 35002, "d657": 48912,
     "d1291": 50801, "d1655": 62128, "d2103": 80450, "d15112": 1573084,
-    "d18512": 645238, "dantzig42": 699, "eil51": 426, "eil76": 538,
+    "d18512": 645238, "dantzig42": 699, "dsj1000": 18660188, "eil51": 426, "eil76": 538,
     "eil101": 629, "fl417": 11861, "fl1400": 20127, "fl1577": 22249,
     "fl3795": 28772, "fnl4461": 182566, "fri26": 937, "gil262": 2378,
     "gr17": 2085, "gr21": 2707, "gr24": 1272, "gr48": 5046, "gr96": 55209,
