@@ -1,0 +1,27 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements-bench.txt
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install 'numba>=0.58'
+      - run: pip install -e . --no-deps
+      - name: fetch the prebuilt Concorde binary
+        run: python scripts/download_benchmarks.py --no-tsplib --no-fu --concorde tools/concorde
+      - run: pytest -q -rs
+        env:
+          CONCORDE_BIN: ${{ github.workspace }}/tools/concorde
+      - name: smoke run
+        run: python -m tspbench run --suite tsp20 --suite atsp20:num=5 --limit 5 --solver farthest_insertion --solver concorde --solver lkh --solver ortools:time_limit=0.1 --seeds 0 1 --out results/ci
+        env:
+          CONCORDE_BIN: ${{ github.workspace }}/tools/concorde

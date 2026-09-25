@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tspbench"
+version = "0.1.0"
+description = "Benchmark suites, baselines and an evaluation harness for learned TSP solvers"
+readme = "BENCHMARKS.md"
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.22", "scipy>=1.8"]
+
+[project.optional-dependencies]
+baselines = ["ortools>=9.8", "elkai>=2.0.1"]
+test = ["pytest>=7"]
+
+[project.scripts]
+tspbench = "tspbench.cli:main"
+
+[tool.setuptools]
+packages = ["tspbench", "tspbench.solvers", "tspgnn"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

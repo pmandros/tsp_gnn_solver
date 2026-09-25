@@ -1,4 +1,10 @@
 __pycache__/
+*.egg-info/
 .pytest_cache/
-data/
+data/*
+!data/refs/
 runs/
+results/*
+!results/RESULTS.md
+!results/main.json
+tools/
