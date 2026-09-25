@@ -1,0 +1,5 @@
+numpy>=1.24,<3
+torch>=2.1
+numba>=0.58
+elkai==2.0.1   # LKH-3 bindings: training labels and reference tours
+pytest>=7
