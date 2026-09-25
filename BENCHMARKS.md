@@ -56,9 +56,11 @@ at a pinned commit. **Do not use their tours as references.** The TSP10000 file
 carries the identity permutation as a placeholder, so the loader ignores it.
 The TSP500 and TSP1000 tours average 16.584 and 23.227, while the optima
 reported in the literature are 16.55 and 23.12, so the shipped tours are about
-0.2–0.5% longer than optimal. Before reporting gaps, run `tspbench reference` with
-Concorde or LKH-3 on these suites. A cached reference takes precedence over the
-file tour.
+0.2–0.5% longer than optimal. The repository ships LKH-3 references for TSP500 and TSP1000 in `data/refs/`,
+averaging 16.546 and 23.119, which matches the literature. On 16 TSP500
+instances they are within 0.004% of Concorde. A cached reference takes
+precedence over the file tour. TSP10000 has no shipped reference yet; run
+`tspbench reference --suite tsp10000 --solver lkh`.
 
 Kool et al. regenerate their sets from seeds. Their `generate_data.py` calls
 `np.random.seed(1234)` and then draws `np.random.uniform(size=(10000, n, 2))`
