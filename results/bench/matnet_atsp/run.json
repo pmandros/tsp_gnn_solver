@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "/home/claude/tsp_gnn_solver/tspbench/__main__.py",
+    "run",
+    "--suite",
+    "atsp20:num=128",
+    "--suite",
+    "atsp50:num=128",
+    "--suite",
+    "atsp100:num=128",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_symmetrized,name=gnn(sym)+2opt",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_symmetrized,gnn=false,name=greedy(dist-sym)+2opt",
+    "--solver",
+    "matnet",
+    "--solver",
+    "nearest_neighbor",
+    "--solver",
+    "lkh",
+    "--seeds",
+    "0",
+    "1",
+    "2",
+    "--workers",
+    "4",
+    "--out",
+    "results/bench/matnet_atsp"
+  ],
+  "suites": [
+    "atsp20:num=128",
+    "atsp50:num=128",
+    "atsp100:num=128"
+  ],
+  "solvers": [
+    "callable:fn=tspgnn.api:solve_symmetrized,name=gnn(sym)+2opt",
+    "callable:fn=tspgnn.api:solve_symmetrized,gnn=false,name=greedy(dist-sym)+2opt",
+    "matnet",
+    "nearest_neighbor",
+    "lkh"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "limit": null,
+  "workers": 4,
+  "wall_s": 165.7092957496643,
+  "git_commit": "c3a60f0971c41acb9da5acd42adc3255a2bccf91",
+  "python": "3.11.15",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "numpy": "2.4.6"
+}

@@ -29,6 +29,8 @@ Per-instance records are in `results/bench/*/records.csv.gz`, and the command li
 - **LKH-3 is the elephant in the room.** It is within 0.01% of optimal on every generated set, in 0.05 s at n = 100
   and 8–12 s at n = 1000.
 
+The comparison with MatNet on non-metric and asymmetric instances is in [MATNET.md](MATNET.md).
+
 ## Comparison with published learned solvers
 
 Gaps as reported in the papers, on the same test sets: the Kool et al. TSP20/50/100 set (10,000 instances;

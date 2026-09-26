@@ -75,3 +75,14 @@ def test_api_entry_points_return_valid_tours(name):
 
     d = instances.generate("euclidean", 40, np.random.default_rng(3))
     assert is_valid_tour(getattr(api, name)(d), 40)
+
+
+def test_symmetrized_fallback_returns_the_cheaper_direction():
+    from tspbench.generators import atsp_tmat
+    from tspgnn.api import solve_symmetrized
+
+    d = atsp_tmat(30, 1, seed=0)[0].matrix
+    for gnn in (True, False):
+        tour = solve_symmetrized(d, gnn=gnn)
+        assert is_valid_tour(tour, 30)
+        assert tour_length(d, tour) <= tour_length(d, tour[::-1]) + 1e-12

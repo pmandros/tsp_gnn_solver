@@ -1,0 +1,2 @@
+suite,solver,instances,seeds,ok,failed,failures,reference,ci_over,gap_mean,gap_ci95,gap_best_mean,gap_best_ci95,length_mean,time_mean_s,time_total_s
+atsp_tsplib:max_n=256,"matnet:aug=128,scale=max",15,1,15,0,,optimum,instances,0.34116726440773165,0.25095148950915397,0.34116726440773165,0.25095148950915397,10590.933333333332,270.6757717834665,4060.1365767519974
