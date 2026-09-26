@@ -4,7 +4,8 @@
 
 Expects one tspbench output directory per model, named after it
 (``seed0``, ``seed1``, ..., plus any model-free baselines such as ``baseline``),
-each holding a ``summary.csv``. For every suite and method it reports the mean
+each holding a ``summary.csv``. ``--eval-dir`` can be repeated to merge runs
+over different suites. For every suite and method it reports the mean
 gap to the reference over the ``seed*`` models, the standard deviation across
 seeds, and each seed's own gap.
 """
@@ -23,9 +24,10 @@ def method_name(spec):
     return m.group(1) if m else spec
 
 
-def read(eval_dir):
+def read(eval_dirs):
     rows = defaultdict(dict)  # (suite, method) -> {model: row}
-    for path in sorted(glob.glob(os.path.join(eval_dir, "*", "summary.csv"))):
+    paths = [p for d in eval_dirs for p in sorted(glob.glob(os.path.join(d, "*", "summary.csv")))]
+    for path in paths:
         model = os.path.basename(os.path.dirname(path))
         for r in csv.DictReader(open(path)):
             rows[(r["suite"], method_name(r["solver"]))][model] = r
@@ -54,7 +56,7 @@ def table(rows):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--eval-dir", required=True)
+    p.add_argument("--eval-dir", required=True, action="append", help="repeatable")
     p.add_argument("--out")
     a = p.parse_args()
     md = table(read(a.eval_dir))

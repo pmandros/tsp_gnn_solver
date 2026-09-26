@@ -4,7 +4,7 @@ The Traveling Salesman Problem (TSP) is a classic optimization problem in the fi
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pmandros/tsp_gnn_solver/blob/main/colab_gpu_training.ipynb)
 
-[`colab_gpu_training.ipynb`](colab_gpu_training.ipynb) trains `tspgnn` with several seeds on a Colab GPU and evaluates every seed with `tspbench`, both greedy + 2-opt and guided search against the distance-guided baseline. Choose a GPU runtime and press *Run all*. Data, checkpoints and results go to Google Drive, and re-running after a disconnect resumes where it stopped.
+[`colab_gpu_training.ipynb`](colab_gpu_training.ipynb) trains `tspgnn` with several seeds on a Colab GPU and evaluates every seed with `tspbench`, both greedy + 2-opt and guided search against the distance-guided baseline. Choose an A100 GPU runtime (the defaults are sized for it) and press *Run all*. Data, checkpoints and results go to Google Drive, and re-running after a disconnect resumes where it stopped.
 
 ## Benchmarks and baselines
 
