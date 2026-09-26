@@ -9,5 +9,8 @@ results/*
 !results/main.json
 !results/BENCHMARK.md
 !results/bench/
+!results/SEARCH.md
+!results/search/
+results/search/*/records.csv
 results/bench/*/records.csv
 tools/

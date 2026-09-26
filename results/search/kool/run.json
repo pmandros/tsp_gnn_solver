@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "/home/claude/tsp_gnn_solver/tspbench/__main__.py",
+    "run",
+    "--suite",
+    "tsp20",
+    "--suite",
+    "tsp50",
+    "--suite",
+    "tsp100",
+    "--limit",
+    "1280",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true",
+    "--seeds",
+    "0",
+    "--workers",
+    "4",
+    "--out",
+    "results/search/kool"
+  ],
+  "suites": [
+    "tsp20",
+    "tsp50",
+    "tsp100"
+  ],
+  "solvers": [
+    "callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true",
+    "callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true",
+    "callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true",
+    "callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true"
+  ],
+  "seeds": [
+    0
+  ],
+  "limit": 1280,
+  "workers": 4,
+  "wall_s": 256.59908747673035,
+  "git_commit": "6c09ff0805e26c2b3ad29efc00716fb4857ad85e",
+  "python": "3.11.15",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "numpy": "2.4.6"
+}

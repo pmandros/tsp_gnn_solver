@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/home/claude/tsp_gnn_solver/tspbench/__main__.py",
+    "run",
+    "--suite",
+    "tsplib:max_n=10000",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true",
+    "--seeds",
+    "0",
+    "--workers",
+    "4",
+    "--out",
+    "results/search/tsplib"
+  ],
+  "suites": [
+    "tsplib:max_n=10000"
+  ],
+  "solvers": [
+    "callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true",
+    "callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true"
+  ],
+  "seeds": [
+    0
+  ],
+  "limit": null,
+  "workers": 4,
+  "wall_s": 122.57359290122986,
+  "git_commit": "6c09ff0805e26c2b3ad29efc00716fb4857ad85e",
+  "python": "3.11.15",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "numpy": "2.4.6"
+}
