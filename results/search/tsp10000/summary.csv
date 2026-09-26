@@ -1,0 +1,3 @@
+suite,solver,instances,seeds,ok,failed,failures,reference,ci_over,gap_mean,gap_ci95,gap_best_mean,gap_best_ci95,length_mean,time_mean_s,time_total_s
+tsp10000,"callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true",16,1,16,0,,"lkh:max_trials=1000,time_limit=300",instances,0.00793359136564778,0.0003023663155054795,0.00793359136564778,0.0003023663155054795,72.3470709578569,46.60460548468748,745.6736877549997
+tsp10000,"callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true",16,1,16,0,,"lkh:max_trials=1000,time_limit=300",instances,0.01137366575050626,0.00044662246352489493,0.01137366575050626,0.00044662246352489493,72.5940171598885,40.77110317893752,652.3376508630004

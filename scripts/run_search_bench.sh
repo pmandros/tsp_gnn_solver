@@ -30,4 +30,10 @@ want tsplib && python -m tspbench run --suite "tsplib:max_n=10000" "${S[@]}" \
 want tsp10000 && python -m tspbench run --suite tsp10000 "${S[@]}" \
   --seeds 0 --workers 2 --out $OUT/tsp10000
 
+# Time check: distance guide with twice the budget, GNN guide with half.
+want timecheck && python -m tspbench run --suite tsp1000 --suite nonmetric1000:num=128 \
+  --solver "callable:fn=tspgnn.api:solve_search,guide=dist,time_per_node=0.004,name=dist+search(2x),stochastic=true" \
+  --solver "callable:fn=tspgnn.api:solve_search,guide=gnn,time_per_node=0.001,name=gnn+search(0.5x),stochastic=true" \
+  --seeds 0 --workers $W --out $OUT/timecheck
+
 true
