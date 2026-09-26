@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/home/claude/tsp_gnn_solver/tspbench/__main__.py",
+    "run",
+    "--suite",
+    "atsp_tsplib:max_n=256",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_symmetrized,name=gnn(sym)+2opt",
+    "--solver",
+    "matnet:scale=max",
+    "--solver",
+    "nearest_neighbor",
+    "--solver",
+    "lkh",
+    "--seeds",
+    "0",
+    "1",
+    "2",
+    "--workers",
+    "4",
+    "--out",
+    "results/bench/matnet_atsp_tsplib"
+  ],
+  "suites": [
+    "atsp_tsplib:max_n=256"
+  ],
+  "solvers": [
+    "callable:fn=tspgnn.api:solve_symmetrized,name=gnn(sym)+2opt",
+    "matnet:scale=max",
+    "nearest_neighbor",
+    "lkh"
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "limit": null,
+  "workers": 4,
+  "wall_s": 11.20275354385376,
+  "git_commit": "c3a60f0971c41acb9da5acd42adc3255a2bccf91",
+  "python": "3.11.15",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "numpy": "2.4.6"
+}

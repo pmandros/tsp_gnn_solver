@@ -86,6 +86,7 @@ A solver is named by a spec string: `name` or `name:key=value,...`.
 | `cheapest_insertion` | deterministic | O(n³), so capped at `max_n=1000`. |
 | `two_opt` (`init=…`, `time_limit`) | inherits `init` | Symmetric instances only. Uses dense vectorized search up to n=1000 and neighbor lists above that. |
 | `exact_dp` | exact | Held–Karp for n ≤ 13, used in tests. |
+| `matnet` (`model`, `aug`, `decode`, `scale`) | learned, seeded | MatNet (Kwon et al. 2021) from its released code and ATSP20/50/100 checkpoints; needs `scripts/download_benchmarks.py --matnet tools/MatNet` and `MATNET_DIR`. Takes any matrix with n ≤ 256. See `results/MATNET.md`. |
 | `callable:fn=pkg.mod:solve` | model | `solve(distance_matrix) -> tour` |
 | `heatmap:fn=pkg.mod:predict,decode=greedy_edge,two_opt=true` | model | `predict(distance_matrix) -> (n, n) scores`, decoded by the harness |
 

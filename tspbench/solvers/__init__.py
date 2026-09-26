@@ -10,7 +10,7 @@ def load_all():
     if _LOADED:
         return
     _LOADED = True
-    from . import concorde, heuristics, lkh, model, ortools_solver  # noqa: F401
+    from . import concorde, heuristics, lkh, matnet, model, ortools_solver  # noqa: F401
 
 
 __all__ = ["Solver", "SolverUnavailable", "Unsupported", "make_solver", "parse_spec", "register", "registry", "load_all"]

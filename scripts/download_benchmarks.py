@@ -1,6 +1,6 @@
 """Download benchmark data (and optionally a Concorde binary) into data/.
 
-    python scripts/download_benchmarks.py [--data-dir data] [--no-fu] [--concorde tools/concorde]
+    python scripts/download_benchmarks.py [--data-dir data] [--no-fu] [--concorde tools/concorde] [--matnet tools/MatNet]
 
 - TSPLIB95 symmetric and asymmetric instances, plus the published optimal
   tours. The script tries the Heidelberg site first and falls back to a
@@ -10,6 +10,9 @@
 - With ``--concorde PATH``, the prebuilt Linux x86-64 Concorde binary that
   pyconcorde ships (jvkersch/pyconcorde), at a pinned commit. Point
   ``CONCORDE_BIN`` at it afterwards.
+- With ``--matnet PATH``, MatNet's released code and ATSP checkpoints
+  (yd-kwon/MatNet, MIT licence) at a pinned commit. Point ``MATNET_DIR`` at it
+  afterwards; ``tspbench`` then offers the ``matnet`` solver.
 """
 
 import argparse
@@ -38,6 +41,8 @@ FU_FILES = {
 }
 CONCORDE_URL = ("https://raw.githubusercontent.com/jvkersch/pyconcorde/a573c1b73244f0dc7cf88ddd18ccfa4c65919974/"
                 "external/pyconcorde-build/binaries/linux/concorde")
+
+MATNET = ("https://github.com/yd-kwon/MatNet", "782698b60979effe2e7b61283cca155b7cdb727f")
 
 
 def fetch(url: str) -> bytes:
@@ -112,12 +117,22 @@ def get_concorde(path: str):
     print(f"{path}  (export CONCORDE_BIN={os.path.abspath(path)})")
 
 
+def get_matnet(path: str):
+    url, commit = MATNET
+    if not os.path.isdir(os.path.join(path, ".git")):
+        print(f"cloning {url}")
+        subprocess.run(["git", "clone", "-q", url, path], check=True)
+    subprocess.run(["git", "-C", path, "checkout", "-q", commit], check=True)
+    print(f"{path}  (export MATNET_DIR={os.path.abspath(path)})")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--data-dir", default="data")
     p.add_argument("--no-tsplib", action="store_true")
     p.add_argument("--no-fu", action="store_true")
     p.add_argument("--concorde", metavar="PATH", help="also download the prebuilt Linux Concorde binary to PATH")
+    p.add_argument("--matnet", metavar="PATH", help="also clone MatNet's code and ATSP checkpoints to PATH")
     args = p.parse_args()
     if not args.no_tsplib:
         get_tsplib(args.data_dir)
@@ -125,6 +140,8 @@ def main():
         get_fu(args.data_dir)
     if args.concorde:
         get_concorde(args.concorde)
+    if args.matnet:
+        get_matnet(args.matnet)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,45 @@
+{
+  "argv": [
+    "/home/claude/tsp_gnn_solver/tspbench/__main__.py",
+    "run",
+    "--suite",
+    "nonmetric20:num=128",
+    "--suite",
+    "nonmetric50:num=128",
+    "--suite",
+    "nonmetric100:num=128",
+    "--solver",
+    "matnet:scale=0.3",
+    "--solver",
+    "matnet:scale=0.1",
+    "--solver",
+    "matnet:scale=0.03",
+    "--seeds",
+    "0",
+    "--workers",
+    "4",
+    "--out",
+    "results/bench/matnet_nonmetric_scaled"
+  ],
+  "suites": [
+    "nonmetric20:num=128",
+    "nonmetric50:num=128",
+    "nonmetric100:num=128"
+  ],
+  "solvers": [
+    "matnet:scale=0.3",
+    "matnet:scale=0.1",
+    "matnet:scale=0.03"
+  ],
+  "seeds": [
+    0
+  ],
+  "limit": null,
+  "workers": 4,
+  "wall_s": 143.03568768501282,
+  "git_commit": "c3a60f0971c41acb9da5acd42adc3255a2bccf91",
+  "python": "3.11.15",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "numpy": "2.4.6"
+}

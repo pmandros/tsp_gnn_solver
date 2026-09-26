@@ -296,3 +296,16 @@ def test_concorde_reaches_tsplib_optimum(name):
 def test_concorde_atsp_br17():
     inst = read_tsplib(os.path.join(DATA, "br17.atsp"), optimum=39)
     assert inst.tour_length(make_solver("concorde").solve(inst)) == 39
+
+
+@pytest.mark.skipif(not os.environ.get("MATNET_DIR"), reason="MATNET_DIR not set (scripts/download_benchmarks.py --matnet)")
+def test_matnet_solves_atsp_and_symmetric():
+    from tspbench.generators import atsp_tmat, nonmetric
+    from tspbench.solvers import Unsupported, make_solver
+
+    s = make_solver("matnet:aug=2")
+    for inst in (atsp_tmat(20, 1, seed=0)[0], nonmetric(30, 1, seed=0)[0]):
+        tour = s.solve(inst, seed=0)
+        assert sorted(tour.tolist()) == list(range(inst.n))
+    with pytest.raises(Unsupported):
+        s.solve(nonmetric(257, 1, seed=0)[0])
