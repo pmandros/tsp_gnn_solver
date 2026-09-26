@@ -1,5 +1,11 @@
 The Traveling Salesman Problem (TSP) is a classic optimization problem in the field of operations research and computer science. It poses a straightforward yet computationally challenging question: given a list of cities and the distances between each pair of them, what is the shortest possible route that visits each city exactly once and returns to the origin city? Despite its apparent simplicity, the TSP is known for its combinatorial explosion of possible routes as the number of cities increases, making it a quintessential NP-hard problem. This repository contains a notebook that solves the TSP using graph neural networks.
 
+## Train on a GPU in Colab
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pmandros/tsp_gnn_solver/blob/main/colab_gpu_training.ipynb)
+
+[`colab_gpu_training.ipynb`](colab_gpu_training.ipynb) trains `tspgnn` with several seeds on a Colab GPU and evaluates every seed with `tspbench`, both greedy + 2-opt and guided search against the distance-guided baseline. Choose an A100 GPU runtime (the defaults are sized for it) and press *Run all*. Data, checkpoints and results go to Google Drive, and re-running after a disconnect resumes where it stopped.
+
 ## Benchmarks and baselines
 
 `tspbench/` is a model-agnostic evaluation harness. It includes:
