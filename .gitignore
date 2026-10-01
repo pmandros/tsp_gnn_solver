@@ -14,3 +14,4 @@ results/*
 results/search/*/records.csv
 results/bench/*/records.csv
 tools/
+heatmaps/

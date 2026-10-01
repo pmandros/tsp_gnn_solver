@@ -55,9 +55,33 @@ def solve_distance_greedy(distance_matrix, two_opt=True, k=20):
     return solve_greedy_distance(d, int(k), use_two_opt=two_opt)
 
 
-def _guide(d, guide, checkpoint, k):
+def softdist_heatmap(d, src, dst, tau=None):
+    """SoftDist (Xia et al., ICML 2024): row-wise softmax(-d / tau), symmetrized.
+
+    Computed on the kNN candidate edges only, which hold almost all of the mass.
+    ``tau`` defaults to 0.3 x the mean nearest-neighbour distance, which matches the
+    temperatures the paper tuned on uniform TSP500/1000/10000 (0.0066 / 0.0051 / 0.0018).
+    """
+    n = d.shape[0]
+    if tau is None:
+        tau = 0.3 * np.mean(np.take_along_axis(d, knn_lists(d, 1), 1))
+    s = np.concatenate([src, dst])
+    t = np.concatenate([dst, src])
+    logit = -d[s, t] / float(tau)
+    row_max = np.full(n, -np.inf)
+    np.maximum.at(row_max, s, logit)
+    e = np.exp(logit - row_max[s])
+    z = np.bincount(s, weights=e, minlength=n)
+    p = e / z[s]
+    m = src.shape[0]
+    return 0.5 * (p[:m] + p[m:])
+
+
+def _guide(d, guide, checkpoint, k, tau=None):
     """Candidate kNN edges, a score per edge for ranking and perturbing (GNN logit or
-    -distance), and the per-edge sampling prior with its kind (see ``guide_weights``)."""
+    -distance), and the per-edge sampling prior with its kind (see ``guide_weights``).
+
+    ``gnn`` is the model; ``dist`` and ``softdist`` are model-free baselines."""
     if guide == "gnn":
         (src, dst), logit = gnn_heatmap(load_model(checkpoint), d, k)
         return src, dst, logit, 1.0 / (1.0 + np.exp(-logit)), "prob"
@@ -67,22 +91,30 @@ def _guide(d, guide, checkpoint, k):
         src, dst = g.edge_index[:, :m]
         score = -d[src, dst]
         return src, dst, score, score, "rank"
-    raise ValueError("guide must be gnn or dist")
+    if guide == "softdist":
+        g = build_graph(d, k=k)
+        m = g.edge_index.shape[1] // 2
+        src, dst = g.edge_index[:, :m]
+        p = softdist_heatmap(d, src, dst, tau)
+        return src, dst, np.log(np.maximum(p, 1e-300)), p, "prob"
+    raise ValueError("guide must be gnn, dist or softdist")
 
 
 def solve_search(distance_matrix, checkpoint=DEFAULT_CHECKPOINT, guide="gnn", time_limit=None,
-                 time_per_node=0.002, m=5, depth=6, kick_len=30, k=20, seed=0):
+                 time_per_node=0.002, m=5, depth=6, kick_len=30, k=20, seed=0, tau=None):
     """Guided k-opt search (see ``tspgnn.search``) from the guide's greedy + 2-opt tour.
 
     ``guide=gnn`` samples moves from the GNN heatmap; ``guide=dist`` is the
-    ablation that ranks the same candidate edges by distance. The search runs
+    ablation that ranks the same candidate edges by distance, and
+    ``guide=softdist`` uses the SoftDist heatmap (temperature ``tau``). The search runs
     for ``time_limit`` seconds, by default ``time_per_node * n``.
     """
     d = np.asarray(distance_matrix, dtype=np.float64)
     n = d.shape[0]
     if n <= 3:
         return np.arange(n)
-    src, dst, score, prior, kind = _guide(d, guide, checkpoint, int(k))
+    src, dst, score, prior, kind = _guide(d, guide, checkpoint, int(k),
+                                          None if tau is None else float(tau))
     tour = greedy_edge_tour(n, src, dst, np.argsort(-score, kind="stable"), d)
     tour = _two_opt(d, tour, knn_lists(d, 20))
     cand, val = candidate_lists(n, src, dst, prior, int(m))
