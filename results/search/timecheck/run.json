@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/home/claude/tsp_gnn_solver/tspbench/__main__.py",
+    "run",
+    "--suite",
+    "tsp1000",
+    "--suite",
+    "nonmetric1000:num=128",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_search,guide=dist,time_per_node=0.004,name=dist+search(2x),stochastic=true",
+    "--solver",
+    "callable:fn=tspgnn.api:solve_search,guide=gnn,time_per_node=0.001,name=gnn+search(0.5x),stochastic=true",
+    "--seeds",
+    "0",
+    "--workers",
+    "4",
+    "--out",
+    "results/search/timecheck"
+  ],
+  "suites": [
+    "tsp1000",
+    "nonmetric1000:num=128"
+  ],
+  "solvers": [
+    "callable:fn=tspgnn.api:solve_search,guide=dist,time_per_node=0.004,name=dist+search(2x),stochastic=true",
+    "callable:fn=tspgnn.api:solve_search,guide=gnn,time_per_node=0.001,name=gnn+search(0.5x),stochastic=true"
+  ],
+  "seeds": [
+    0
+  ],
+  "limit": null,
+  "workers": 4,
+  "wall_s": 342.0223023891449,
+  "git_commit": "6c09ff0805e26c2b3ad29efc00716fb4857ad85e",
+  "python": "3.11.15",
+  "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+  "cpu_count": 4,
+  "numpy": "2.4.6"
+}

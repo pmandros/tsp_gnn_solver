@@ -75,3 +75,29 @@ def test_api_entry_points_return_valid_tours(name):
 
     d = instances.generate("euclidean", 40, np.random.default_rng(3))
     assert is_valid_tour(getattr(api, name)(d), 40)
+
+
+@pytest.mark.parametrize("kind", ["euclidean", "random"])
+def test_guided_search_is_valid_and_never_worse(kind):
+    from tspgnn.search import candidate_lists, guide_weights, guided_search
+
+    d = instances.generate(kind, 120, np.random.default_rng(5))
+    g = build_graph(d)
+    m = g.edge_index.shape[1] // 2
+    src, dst = g.edge_index[:, :m]
+    start = solve_greedy_distance(d)
+    cand, val = candidate_lists(120, src, dst, -d[src, dst], 5)
+    assert np.all(d[np.arange(120)[:, None], cand[:, :1]] <= d[np.arange(120)[:, None], cand[:, 1:2]])
+    out = guided_search(d, start, cand, guide_weights(cand, val, "rank"), time_limit=0.2)
+    assert is_valid_tour(out, 120)
+    assert tour_length(d, out) <= tour_length(d, start) + 1e-9
+
+
+def test_search_and_sample_entry_points():
+    from tspgnn import api
+
+    torch.manual_seed(0)
+    d = instances.generate("euclidean", 60, np.random.default_rng(6))
+    for guide in ("gnn", "dist"):
+        assert is_valid_tour(api.solve_search(d, guide=guide, time_limit=0.05), 60)
+        assert is_valid_tour(api.solve_sample(d, guide=guide, samples=4), 60)

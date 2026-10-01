@@ -1,0 +1,52 @@
+| suite | solver | n inst | seeds | gap vs ref | gap vs best in run | time / inst | ref | failed |
+|---|---|---:|---:|---:|---:|---:|---|---:|
+| manhattan100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.049% ± 0.025% | 0.049% ± 0.025% | 0.236s | concorde | 0 |
+| manhattan100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.147% ± 0.061% | 0.147% ± 0.061% | 0.202s | concorde | 0 |
+| manhattan100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 1.523% ± 0.135% | 1.523% ± 0.135% | 0.0258s | concorde | 0 |
+| manhattan100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 3.104% ± 0.212% | 3.104% ± 0.212% | 0.00317s | concorde | 0 |
+| chebyshev100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.063% ± 0.035% | 0.063% ± 0.035% | 0.237s | concorde | 0 |
+| chebyshev100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.135% ± 0.050% | 0.135% ± 0.050% | 0.202s | concorde | 0 |
+| chebyshev100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 1.412% ± 0.122% | 1.412% ± 0.122% | 0.0266s | concorde | 0 |
+| chebyshev100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 2.955% ± 0.194% | 2.955% ± 0.194% | 0.00416s | concorde | 0 |
+| clustered100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.034% ± 0.023% | 0.034% ± 0.023% | 0.237s | concorde | 0 |
+| clustered100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.190% ± 0.108% | 0.190% ± 0.108% | 0.202s | concorde | 0 |
+| clustered100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 1.401% ± 0.125% | 1.401% ± 0.125% | 0.0246s | concorde | 0 |
+| clustered100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 2.428% ± 0.163% | 2.428% ± 0.163% | 0.00415s | concorde | 0 |
+| nonmetric100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.090% ± 0.031% | 0.090% ± 0.031% | 0.235s | concorde | 0 |
+| nonmetric100:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.668% ± 0.098% | 0.668% ± 0.098% | 0.202s | concorde | 0 |
+| nonmetric100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 4.527% ± 0.337% | 4.527% ± 0.337% | 0.0247s | concorde | 0 |
+| nonmetric100:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 30.882% ± 1.379% | 30.882% ± 1.379% | 0.00426s | concorde | 0 |
+| manhattan500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.404% ± 0.042% | 0.406% ± 0.041% | 1.14s | lkh | 0 |
+| manhattan500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.633% ± 0.053% | 0.635% ± 0.053% | 1.02s | lkh | 0 |
+| manhattan500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 3.410% ± 0.097% | 3.412% ± 0.098% | 0.131s | lkh | 0 |
+| manhattan500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 5.071% ± 0.206% | 5.074% ± 0.206% | 0.0322s | lkh | 0 |
+| chebyshev500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.430% ± 0.041% | 0.430% ± 0.041% | 1.14s | lkh | 0 |
+| chebyshev500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.624% ± 0.053% | 0.624% ± 0.053% | 1.02s | lkh | 0 |
+| chebyshev500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 3.314% ± 0.084% | 3.314% ± 0.084% | 0.149s | lkh | 0 |
+| chebyshev500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 4.971% ± 0.164% | 4.971% ± 0.164% | 0.0391s | lkh | 0 |
+| clustered500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.377% ± 0.044% | 0.377% ± 0.044% | 1.15s | lkh | 0 |
+| clustered500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.815% ± 0.090% | 0.815% ± 0.090% | 1.02s | lkh | 0 |
+| clustered500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 3.197% ± 0.092% | 3.197% ± 0.092% | 0.141s | lkh | 0 |
+| clustered500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 4.957% ± 0.165% | 4.957% ± 0.165% | 0.0331s | lkh | 0 |
+| nonmetric500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 1.519% ± 0.067% | 1.519% ± 0.067% | 1.12s | lkh | 0 |
+| nonmetric500:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 10.067% ± 0.250% | 10.067% ± 0.250% | 1.01s | lkh | 0 |
+| nonmetric500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 15.677% ± 0.421% | 15.677% ± 0.421% | 0.112s | lkh | 0 |
+| nonmetric500:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 53.816% ± 1.079% | 53.816% ± 1.079% | 0.0315s | lkh | 0 |
+| manhattan1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.532% ± 0.036% | 0.532% ± 0.036% | 2.26s | lkh | 0 |
+| manhattan1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.835% ± 0.037% | 0.835% ± 0.037% | 2.06s | lkh | 0 |
+| manhattan1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 3.854% ± 0.064% | 3.854% ± 0.064% | 0.272s | lkh | 0 |
+| manhattan1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 5.117% ± 0.140% | 5.117% ± 0.140% | 0.108s | lkh | 0 |
+| chebyshev1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.494% ± 0.030% | 0.494% ± 0.030% | 2.28s | lkh | 0 |
+| chebyshev1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 0.785% ± 0.039% | 0.785% ± 0.039% | 2.08s | lkh | 0 |
+| chebyshev1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 3.765% ± 0.065% | 3.765% ± 0.065% | 0.294s | lkh | 0 |
+| chebyshev1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 5.007% ± 0.138% | 5.007% ± 0.138% | 0.131s | lkh | 0 |
+| clustered1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 0.553% ± 0.041% | 0.553% ± 0.041% | 2.26s | lkh | 0 |
+| clustered1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 1.016% ± 0.086% | 1.016% ± 0.086% | 2.05s | lkh | 0 |
+| clustered1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 3.752% ± 0.080% | 3.752% ± 0.080% | 0.276s | lkh | 0 |
+| clustered1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 4.960% ± 0.161% | 4.960% ± 0.161% | 0.104s | lkh | 0 |
+| nonmetric1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=gnn,name=gnn+search,stochastic=true` | 128 | 1 | 3.456% ± 0.094% | 3.456% ± 0.094% | 2.23s | lkh | 0 |
+| nonmetric1000:num=128 | `callable:fn=tspgnn.api:solve_search,guide=dist,name=dist+search,stochastic=true` | 128 | 1 | 21.119% ± 0.308% | 21.119% ± 0.308% | 2.04s | lkh | 0 |
+| nonmetric1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=gnn,name=gnn+sample16,stochastic=true` | 128 | 1 | 21.496% ± 0.305% | 21.496% ± 0.305% | 0.241s | lkh | 0 |
+| nonmetric1000:num=128 | `callable:fn=tspgnn.api:solve_sample,guide=dist,name=dist+sample16,stochastic=true` | 128 | 1 | 64.166% ± 0.971% | 64.166% ± 0.971% | 0.0841s | lkh | 0 |
+
+± is a 95% t-interval across seeds for stochastic solvers, across instances otherwise.
